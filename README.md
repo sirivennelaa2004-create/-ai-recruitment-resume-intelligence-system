@@ -1,59 +1,36 @@
-# AI-Powered Recruitment & Resume Intelligence System
+# AI Recruitment & Resume Intelligence System
 
-An AI-assisted recruitment platform that helps candidates analyze resumes and discover relevant jobs while helping recruiters evaluate and rank candidates using explainable matching techniques.
+A FastAPI and PostgreSQL backend that helps recruiters manage jobs, applications, resumes, and AI-based candidate matching.
 
-## Project Status
+## Features
 
-🚧 Under Development
+- Candidate and recruiter registration/login using JWT authentication
+- Resume PDF upload, text extraction, and skill parsing
+- Recruiter job creation, editing, and closing
+- Candidate job applications
+- Application status management
+- Resume-to-job skill matching
+- Matched skills, missing skills, and match percentage
+- Recruiter applicant ranking
+- Role-based security for candidate and recruiter actions
 
-## Technology Stack
+## Technologies Used
 
 - Python
 - FastAPI
 - PostgreSQL
 - SQLAlchemy
-- React
-- JavaScript
-- NLP
-- Machine Learning
-- Embeddings
-- LLM Integration
-- Git
-- Docker
+- JWT Authentication
+- PyMuPDF
 
-## Main Features
+## AI Matching Logic
 
-### Candidate
+The system compares candidate resume skills with a job's required skills.
 
-- Registration and login
-- Resume upload
-- Resume analysis
-- Skill extraction
-- Job search
-- Job recommendations
-- Resume-job matching
-- Applications
-- Interview question generation
+It returns:
 
-### Recruiter
-
-- Registration and login
-- Job management
-- Applicant management
-- Candidate search and filtering
-- AI-assisted candidate matching
-- Candidate ranking
-- Recruitment analytics
-
-## Architecture
-
-The system will contain:
-
-- React frontend
-- FastAPI backend
-- PostgreSQL database
-- AI/ML matching engine
-
-## Project Status
-
-Phase 2 - Project Setup
+- Match percentage
+- Matched skills
+- Missing skills
+- Explainable weighted score
+- Ranked applicants for each job

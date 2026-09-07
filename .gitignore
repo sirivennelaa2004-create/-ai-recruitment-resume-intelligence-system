@@ -1,44 +1,18 @@
-# Python
-__pycache__/
-*.py[cod]
-*.pyo
-
-# Virtual environment
-.venv/
-venv/
-env/
-
-# Environment variables and secrets
+# Secrets
 .env
-.env.*
-!.env.example
+backend/.env
 
-# Uploaded resumes and private files
-uploads/*
-!uploads/.gitkeep
+# Python
+.venv/
+__pycache__/
+*.pyc
 
-# Node
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-pnpm-debug.log*
+# Uploaded resumes
+uploads/
 
-# Build files
-dist/
-build/
-
-# IDE
+# VS Code
 .vscode/
-.idea/
 
-# OS
-.DS_Store
-Thumbs.db
-
-# Testing / coverage
-.pytest_cache/
-.coverage
-htmlcov/
-
-# Logs
-*.log
+# Local database/backups
+*.db
+*.sql
