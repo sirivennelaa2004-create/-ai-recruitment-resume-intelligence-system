@@ -2,8 +2,10 @@
 .env
 backend/.env
 
-# Python
+# Python virtual environment
 .venv/
+
+# Python cache
 __pycache__/
 *.pyc
 
@@ -13,6 +15,6 @@ uploads/
 # VS Code
 .vscode/
 
-# Local database/backups
+# Local database files
 *.db
 *.sql
