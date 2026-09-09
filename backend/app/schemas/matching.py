@@ -15,7 +15,12 @@ class ResumeJobMatchResponse(BaseModel):
     matched_weight: float
     total_weight: float
     match_percentage: float
-
+    skill_match_percentage: float
+    semantic_similarity_percentage: float
+    experience_percentage: float
+    education_percentage: float
+    project_percentage: float
+    match_percentage: float
     explanation: str
 class ApplicantMatchResponse(BaseModel):
     application_id: int
@@ -23,9 +28,13 @@ class ApplicantMatchResponse(BaseModel):
     candidate_name: str
     candidate_email: str
     application_status: str
-
     resume_id: int | None
     matched_skills: list[str]
     missing_skills: list[str]
+    skill_match_percentage: float
+    semantic_similarity_percentage: float
+    experience_percentage: float
+    education_percentage: float
+    project_percentage: float
     match_percentage: float
     explanation: str

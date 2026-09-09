@@ -79,3 +79,34 @@ def calculate_skill_match(
         "total_weight": total_weight,
         "match_percentage": match_percentage
     }
+def calculate_final_match_score(
+    skill_match_percentage: float,
+    semantic_similarity_percentage: float,
+    experience_percentage: float,
+    education_percentage: float,
+    project_percentage: float
+) -> float:
+    """
+    Calculate the final candidate-job match score.
+
+    Skills: 40%
+    Semantic similarity: 30%
+    Experience: 15%
+    Education: 5%
+    Projects: 10%
+    """
+
+    final_score = (
+        (skill_match_percentage * 0.40)
+        + (semantic_similarity_percentage * 0.30)
+        + (experience_percentage * 0.15)
+        + (education_percentage * 0.05)
+        + (project_percentage * 0.10)
+    )
+
+    return round(final_score, 2)
+def safe_text(value: str | None) -> str:
+    if not value:
+        return ""
+
+    return value.strip()
