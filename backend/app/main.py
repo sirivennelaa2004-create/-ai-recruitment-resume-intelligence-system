@@ -15,6 +15,9 @@ from backend.app.routes.analytics import router as analytics_router
 from backend.app.routes.interview_prep import router as interview_prep_router
 
 
+from backend.app.utils.config import CORS_ORIGINS
+
+
 # Create database tables
 Base.metadata.create_all(bind=engine)
 
@@ -27,11 +30,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "http://localhost:3000"
-    ],
+    allow_origins=CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

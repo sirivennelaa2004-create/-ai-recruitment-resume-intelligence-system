@@ -138,6 +138,42 @@ Frontend will be live at `http://localhost:5173`.
 
 ---
 
+## 🚀 Production Deployment Guide
+
+### Recommended Free / Student Portfolio Architecture
+- **Frontend Hosting**: Vercel or Netlify (Free static React site hosting).
+- **Backend API Hosting**: Render Web Service or Railway (Free/Hobby container hosting).
+- **PostgreSQL Hosting**: Neon.tech or Render PostgreSQL (Free cloud database tier).
+
+### Environment Variables Matrix
+
+| Subsystem | Variable Name | Required | Example Production Value |
+|---|---|---|---|
+| Backend | `DATABASE_URL` | Yes | `postgresql+psycopg://user:pass@ep-xyz.neon.tech/neondb` |
+| Backend | `JWT_SECRET_KEY` | Yes | `a_long_random_64_character_hex_string` |
+| Backend | `CORS_ORIGINS` | Yes | `https://ai-recruitment.vercel.app,https://ai-recruitment.netlify.app` |
+| Backend | `JWT_ACCESS_TOKEN_EXPIRE_MINUTES` | No | `60` |
+| Frontend | `VITE_API_URL` | Yes | `https://ai-recruitment-backend.onrender.com` |
+
+### Step-by-Step Manual Deployment Steps
+
+1. **Database Setup (Neon / Render Postgres)**:
+   - Create a free PostgreSQL instance on [Neon.tech](https://neon.tech) or Render.
+   - Copy the provided connection string (e.g. `postgres://user:password@ep-xyz.neon.tech/neondb`).
+
+2. **Backend Deployment (Render / Railway)**:
+   - Connect your GitHub repository to Render as a Web Service.
+   - Set Build Command: `pip install -r requirements.txt`
+   - Set Start Command: `uvicorn backend.app.main:app --host 0.0.0.0 --port 10000`
+   - Add Environment Variables: `DATABASE_URL`, `JWT_SECRET_KEY`, `CORS_ORIGINS`.
+
+3. **Frontend Deployment (Vercel / Netlify)**:
+   - Connect repository to Vercel/Netlify with Root Directory `frontend/`.
+   - Set Build Command: `npm run build`, Output Directory: `dist`.
+   - Add Environment Variable: `VITE_API_URL` pointing to your deployed backend URL.
+
+---
+
 ## 🧪 Running Automated Tests
 
 ```bash
@@ -146,7 +182,7 @@ $env:PYTHONPATH="."  # PowerShell
 # or export PYTHONPATH=. # Bash
 
 # Run full pytest suite
-.venv\Scripts\pytest.exe
+.venv\Scripts\pytest.exe backend/tests/test_live_api_demo.py backend/test_matching.py backend/test_security.py
 
 # Verify frontend build
 cd frontend && npm run build
@@ -154,7 +190,7 @@ cd frontend && npm run build
 
 ---
 
-## 🐳 Docker Deployment
+## 🐳 Docker Containerization
 
 To run the complete platform including PostgreSQL, FastAPI, and Nginx React frontend in Docker containers:
 

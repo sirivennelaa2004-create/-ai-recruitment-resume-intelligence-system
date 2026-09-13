@@ -3,13 +3,18 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-
 # Find the backend folder
 BASE_DIR = Path(__file__).resolve().parents[2]
 
-# Load backend/.env
+# Load backend/.env if present
 ENV_FILE = BASE_DIR / ".env"
-load_dotenv(ENV_FILE)
+if ENV_FILE.exists():
+    load_dotenv(ENV_FILE)
+
+# Also check root .env
+ROOT_ENV = BASE_DIR.parent / ".env"
+if ROOT_ENV.exists():
+    load_dotenv(ROOT_ENV)
 
 
 # Application settings
@@ -25,6 +30,8 @@ APP_VERSION = os.getenv(
 
 
 # Database settings
+DATABASE_URL_ENV = os.getenv("DATABASE_URL")
+
 DATABASE_HOST = os.getenv(
     "DATABASE_HOST",
     "localhost"
@@ -46,10 +53,15 @@ DATABASE_USER = os.getenv(
 )
 
 DATABASE_PASSWORD = os.getenv(
-    "DATABASE_PASSWORD"
+    "DATABASE_PASSWORD",
+    "postgres"
 )
+
+
+# Security & JWT settings
 JWT_SECRET_KEY = os.getenv(
-    "JWT_SECRET_KEY"
+    "JWT_SECRET_KEY",
+    "default-dev-secret-key-please-change-in-production-123456789"
 )
 
 JWT_ALGORITHM = os.getenv(
@@ -63,3 +75,16 @@ JWT_ACCESS_TOKEN_EXPIRE_MINUTES = int(
         "60"
     )
 )
+
+
+# CORS Allowed Origins
+CORS_ORIGINS_RAW = os.getenv(
+    "CORS_ORIGINS",
+    "http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000"
+)
+
+CORS_ORIGINS = [
+    origin.strip()
+    for origin in CORS_ORIGINS_RAW.split(",")
+    if origin.strip()
+]
