@@ -41,13 +41,6 @@ def match_resume_to_job(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    # Only recruiters can view candidate-job matching results.
-    if current_user.role != "recruiter":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only recruiters can view matching results"
-        )
-
     job = db.query(Job).filter(
         Job.id == job_id
     ).first()
@@ -58,13 +51,6 @@ def match_resume_to_job(
             detail="Job not found"
         )
 
-    # Recruiters can only match candidates to their own jobs.
-    if job.recruiter_id != current_user.id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="You can only view matches for your own jobs"
-        )
-
     resume = db.query(Resume).filter(
         Resume.id == resume_id
     ).first()
@@ -73,6 +59,25 @@ def match_resume_to_job(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Resume not found"
+        )
+
+    # Permission check: Candidate can view match for own resume; Recruiter can view match for own job.
+    if current_user.role == "candidate":
+        if resume.user_id != current_user.id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You can only view matching results for your own resume"
+            )
+    elif current_user.role == "recruiter":
+        if job.recruiter_id != current_user.id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You can only view matches for your own jobs"
+            )
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Unauthorized role"
         )
 
     candidate = db.query(User).filter(

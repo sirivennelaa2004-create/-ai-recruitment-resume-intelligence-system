@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from backend.app.database.database import get_db
 from backend.app.models.job import Job
 from backend.app.models.user import User
-from backend.app.schemas.job import JobCreate, JobResponse
+from backend.app.schemas.job import JobCreate, JobUpdate, JobResponse
 from backend.app.utils.auth_dependency import get_current_user
 
 
@@ -51,6 +51,27 @@ def create_job(
 
 
 @router.get(
+    "/my",
+    response_model=list[JobResponse]
+)
+def get_my_jobs(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    if current_user.role != "recruiter":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only recruiters can view their posted jobs"
+        )
+
+    jobs = db.query(Job).filter(
+        Job.recruiter_id == current_user.id
+    ).order_by(Job.id.desc()).all()
+
+    return jobs
+
+
+@router.get(
     "/",
     response_model=list[JobResponse]
 )
@@ -64,6 +85,8 @@ def get_jobs(
     ).all()
 
     return jobs
+
+
 @router.get(
     "/{job_id}",
     response_model=JobResponse
@@ -84,6 +107,47 @@ def get_job(
         )
 
     return job
+
+
+@router.put(
+    "/{job_id}",
+    response_model=JobResponse
+)
+def update_job(
+    job_id: int,
+    job_data: JobUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    job = db.query(Job).filter(Job.id == job_id).first()
+
+    if not job:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Job not found"
+        )
+
+    if job.recruiter_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You can only edit your own jobs"
+        )
+
+    job.title = job_data.title
+    job.description = job_data.description
+    job.required_skills = job_data.required_skills
+    job.experience_required = job_data.experience_required
+    job.education_required = job_data.education_required
+    job.location = job_data.location
+    job.salary = job_data.salary
+    if job_data.status:
+        job.status = job_data.status
+
+    db.commit()
+    db.refresh(job)
+
+    return job
+
 
 @router.patch(
     "/{job_id}/close",
@@ -115,4 +179,4 @@ def close_job(
     db.commit()
     db.refresh(job)
 
-    return job
+    return job

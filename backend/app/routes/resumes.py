@@ -14,7 +14,6 @@ from backend.app.utils.auth_dependency import get_current_user
 
 router = APIRouter(prefix="/resumes", tags=["Resumes"])
 
-
 UPLOAD_DIR = Path("uploads")
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -25,7 +24,6 @@ async def upload_resume(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-
     # Check whether a file was selected
     if not file.filename:
         raise HTTPException(
@@ -34,19 +32,27 @@ async def upload_resume(
         )
 
     # Only PDF files are allowed
-    if not file.filename.lower().endswith(".pdf"):
+    safe_name = Path(file.filename).name
+    if not safe_name.lower().endswith(".pdf"):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Only PDF files are allowed"
         )
 
-    # Create a unique filename
-    unique_filename = f"{uuid4()}_{file.filename}"
-
-    file_path = UPLOAD_DIR / unique_filename
-
-    # Read and save the uploaded file
+    # Read uploaded file content
     file_content = await file.read()
+
+    # Limit file size to 5 MB
+    MAX_FILE_SIZE = 5 * 1024 * 1024
+    if len(file_content) > MAX_FILE_SIZE:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="File size exceeds maximum allowed limit of 5 MB"
+        )
+
+    # Create a unique filename safely
+    unique_filename = f"{uuid4()}_{safe_name}"
+    file_path = UPLOAD_DIR / unique_filename
 
     with open(file_path, "wb") as buffer:
         buffer.write(file_content)
@@ -81,4 +87,33 @@ async def upload_resume(
         "user_id": current_user.id,
         "filename": unique_filename,
         "resume": resume_data
+    }
+
+
+@router.get("/my")
+def get_my_resume(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    resume = (
+        db.query(Resume)
+        .filter(Resume.user_id == current_user.id)
+        .order_by(Resume.id.desc())
+        .first()
+    )
+
+    if not resume:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No resume found. Please upload your resume first."
+        )
+
+    return {
+        "id": resume.id,
+        "user_id": resume.user_id,
+        "filename": resume.filename,
+        "skills": resume.skills,
+        "education": resume.education,
+        "experience": resume.experience,
+        "projects": resume.projects
     }

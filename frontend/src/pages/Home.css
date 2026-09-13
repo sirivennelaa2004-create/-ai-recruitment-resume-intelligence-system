@@ -1,0 +1,48 @@
+.hero-section {
+  text-align: center;
+  padding: 4rem 1rem 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.hero-badge {
+  font-size: 0.85rem;
+  padding: 0.4rem 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: 1.25rem;
+}
+
+.hero-description {
+  font-size: 1.15rem;
+  color: var(--text-muted);
+  max-width: 720px;
+  margin: 0 auto 2rem;
+  line-height: 1.6;
+}
+
+.hero-ctas {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.feature-card {
+  text-align: center;
+  padding: 2rem 1.5rem;
+}
+
+.feature-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+  .hero-title { font-size: 2.2rem; }
+  .hero-ctas { flex-direction: column; }
+}

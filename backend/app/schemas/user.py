@@ -46,3 +46,11 @@ class LoginRequest(BaseModel):
 class TokenResponse(BaseModel):
     access_token: str
     token_type: str
+
+
+class UserUpdate(BaseModel):
+    full_name: str = Field(
+        ...,
+        min_length=2,
+        max_length=100
+    )

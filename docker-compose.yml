@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: ai_recruitment_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DATABASE_USER:-postgres}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-postgres}
+      POSTGRES_DB: ${DATABASE_NAME:-ai_recruitment_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ai_recruitment_backend
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=${DATABASE_NAME:-ai_recruitment_db}
+      - DATABASE_USER=${DATABASE_USER:-postgres}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD:-postgres}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-change-this-to-a-long-random-secret-key}
+      - JWT_ALGORITHM=HS256
+      - JWT_ACCESS_TOKEN_EXPIRE_MINUTES=60
+    depends_on:
+      - db
+    volumes:
+      - ./uploads:/app/uploads
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ai_recruitment_frontend
+    restart: always
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

@@ -8,6 +8,7 @@ from backend.app.models.user import User
 from backend.app.schemas.user import (
     UserCreate,
     UserResponse,
+    UserUpdate,
     LoginRequest,
     TokenResponse
 )
@@ -16,7 +17,7 @@ from backend.app.utils.security import (
     verify_password,
     create_access_token
 )
-from backend.app.utils.config import JWT_SECRET_KEY, JWT_ALGORITHM
+from backend.app.utils.auth_dependency import get_current_user
 
 
 router = APIRouter(
@@ -111,45 +112,22 @@ def login_user(
         "access_token": access_token,
         "token_type": "bearer"
     }
-    
-security = HTTPBearer()
+
 
 @router.get("/me", response_model=UserResponse)
-def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
-    db: Session = Depends(get_db)
+def read_current_user(
+    current_user: User = Depends(get_current_user)
 ):
-    token = credentials.credentials
+    return current_user
 
-    try:
-        payload = jwt.decode(
-            token,
-            JWT_SECRET_KEY,
-            algorithms=[JWT_ALGORITHM]
-        )
 
-        user_id = payload.get("sub")
-
-        if user_id is None:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid token"
-            )
-
-    except JWTError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token"
-        )
-
-    user = db.query(User).filter(
-        User.id == int(user_id)
-    ).first()
-
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="User not found"
-        )
-
-    return user
+@router.put("/profile", response_model=UserResponse)
+def update_user_profile(
+    user_update: UserUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    current_user.full_name = user_update.full_name
+    db.commit()
+    db.refresh(current_user)
+    return current_user
