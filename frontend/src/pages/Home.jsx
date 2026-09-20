@@ -13,7 +13,7 @@ function Home() {
                     AI-Powered Recruitment & <span className="brand-accent">Resume Intelligence System</span>
                 </h1>
                 <p className="hero-description">
-                    Empowering job candidates with explainable AI job matching & interview prep, while giving recruiters instant candidate ranking powered by Sentence Transformer embeddings.
+                    Empowering job candidates with explainable AI job matching & interview prep, while giving recruiters instant candidate ranking powered by TF-IDF vector similarity.
                 </p>
 
                 <div className="hero-ctas">
