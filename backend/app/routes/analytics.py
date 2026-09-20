@@ -8,7 +8,7 @@ from backend.app.models.user import User
 from backend.app.models.resume import Resume
 from backend.app.utils.auth_dependency import get_current_user
 from backend.app.services.matching_service import calculate_skill_match, calculate_final_match_score, safe_text
-from backend.app.services.embedding_service import calculate_semantic_similarity
+from backend.app.services.semantic_similarity_service import calculate_semantic_similarity
 
 router = APIRouter(
     prefix="/analytics",

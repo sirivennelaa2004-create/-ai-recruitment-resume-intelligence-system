@@ -1,5 +1,4 @@
-from backend.app.services.embedding_service import (
-    generate_embedding,
+from backend.app.services.semantic_similarity_service import (
     calculate_semantic_similarity
 )
 
@@ -20,8 +19,6 @@ Illustrator and visual design experience.
 """
 
 
-embedding = generate_embedding(resume_text)
-
 similarity1 = calculate_semantic_similarity(
     resume_text,
     similar_job_text
@@ -32,15 +29,20 @@ similarity2 = calculate_semantic_similarity(
     different_job_text
 )
 
+empty_similarity = calculate_semantic_similarity(
+    "",
+    similar_job_text
+)
 
-print("----- EMBEDDING TEST -----")
-print("Embedding generated:", len(embedding) > 0)
-print("Embedding dimensions:", len(embedding))
+
+print("----- SEMANTIC SIMILARITY TEST -----")
 print("Similar job score:", similarity1)
 print("Different job score:", similarity2)
+print("Empty input score:", empty_similarity)
 
-assert len(embedding) == 384
 assert similarity1 > similarity2
+assert similarity1 > 0
+assert empty_similarity == 0.0
 
 print("Semantic similarity test: PASSED")
 print("----- END -----")

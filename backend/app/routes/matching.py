@@ -18,7 +18,7 @@ from backend.app.services.matching_service import (
     safe_text
 )
 
-from backend.app.services.embedding_service import (
+from backend.app.services.semantic_similarity_service import (
     calculate_semantic_similarity
 )
 
@@ -156,6 +156,13 @@ def match_resume_to_job(
         "project_percentage": project_score,
         "match_percentage": final_score,
 
+        "skill_score": result["match_percentage"],
+        "semantic_score": semantic_score,
+        "experience_score": experience_score,
+        "education_score": education_score,
+        "project_score": project_score,
+        "final_score": final_score,
+
         "explanation": (
             f"Skills: {result['match_percentage']}%. "
             f"Semantic similarity: {semantic_score}%. "
@@ -251,6 +258,13 @@ def rank_job_applicants(
                 "education_percentage": 0.0,
                 "project_percentage": 0.0,
 
+                "skill_score": 0.0,
+                "semantic_score": 0.0,
+                "experience_score": 0.0,
+                "education_score": 0.0,
+                "project_score": 0.0,
+                "final_score": 0.0,
+
                 "match_percentage": 0.0,
 
                 "explanation": (
@@ -327,6 +341,13 @@ def rank_job_applicants(
             "experience_percentage": experience_score,
             "education_percentage": education_score,
             "project_percentage": project_score,
+
+            "skill_score": result["match_percentage"],
+            "semantic_score": semantic_score,
+            "experience_score": experience_score,
+            "education_score": education_score,
+            "project_score": project_score,
+            "final_score": final_score,
 
             "match_percentage": final_score,
 

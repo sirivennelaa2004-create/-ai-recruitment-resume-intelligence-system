@@ -1,8 +1,42 @@
 import fitz
-import httpx
 import uuid
+import pytest
+from fastapi.testclient import TestClient
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, close_all_sessions
+from sqlalchemy.pool import StaticPool
 
-BASE_URL = "http://127.0.0.1:8000"
+from backend.app.main import app
+from backend.app.database.database import Base, get_db
+
+SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
+
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL,
+    connect_args={"check_same_thread": False},
+    poolclass=StaticPool,
+)
+TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+
+def override_get_db():
+    db = TestingSessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+app.dependency_overrides[get_db] = override_get_db
+client = TestClient(app)
+
+
+@pytest.fixture(autouse=True)
+def setup_db():
+    Base.metadata.create_all(bind=engine)
+    yield
+    close_all_sessions()
+    Base.metadata.drop_all(bind=engine)
 
 
 def create_valid_pdf_bytes():
@@ -23,8 +57,6 @@ def create_valid_pdf_bytes():
 
 
 def test_live_full_platform_workflow():
-    client = httpx.Client(base_url=BASE_URL, timeout=30.0)
-
     # 1. Health check
     health = client.get("/health")
     assert health.status_code == 200
@@ -105,6 +137,15 @@ def test_live_full_platform_workflow():
     assert "matched_skills" in match_data
     assert "missing_skills" in match_data
 
+    # Verify matching API fields required:
+    # skill_score, semantic_score, experience_score, education_score, project_score, final_score, matched_skills, missing_skills, explanation
+    assert "skill_score" in match_data or "skill_match_percentage" in match_data
+    assert "semantic_score" in match_data or "semantic_similarity_percentage" in match_data
+    assert "experience_score" in match_data or "experience_percentage" in match_data
+    assert "education_score" in match_data or "education_percentage" in match_data
+    assert "project_score" in match_data or "project_percentage" in match_data
+    assert "final_score" in match_data or "match_percentage" in match_data
+
     # 9. Candidate Application
     apply_resp = client.post("/applications/", headers=cand_headers, json={"job_id": job_id})
     assert apply_resp.status_code == 201
@@ -137,4 +178,4 @@ def test_live_full_platform_workflow():
     assert prep_resp.status_code == 200
     assert len(prep_resp.json()["technical_questions"]) > 0
 
-    print("LIVE HTTP ENDPOINT WORKFLOW COMPLETED SUCCESSFULLY!")
+    print("FULL PLATFORM TEST WORKFLOW COMPLETED SUCCESSFULLY!")

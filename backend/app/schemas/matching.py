@@ -21,7 +21,16 @@ class ResumeJobMatchResponse(BaseModel):
     education_percentage: float
     project_percentage: float
     match_percentage: float
+
+    skill_score: float | None = None
+    semantic_score: float | None = None
+    experience_score: float | None = None
+    education_score: float | None = None
+    project_score: float | None = None
+    final_score: float | None = None
     explanation: str
+
+
 class ApplicantMatchResponse(BaseModel):
     application_id: int
     candidate_id: int
@@ -37,4 +46,11 @@ class ApplicantMatchResponse(BaseModel):
     education_percentage: float
     project_percentage: float
     match_percentage: float
+
+    skill_score: float | None = None
+    semantic_score: float | None = None
+    experience_score: float | None = None
+    education_score: float | None = None
+    project_score: float | None = None
+    final_score: float | None = None
     explanation: str

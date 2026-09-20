@@ -26,7 +26,6 @@ RUN pip install --no-cache-dir \
     pymupdf \
     python-multipart \
     python-dotenv \
-    sentence-transformers \
     scikit-learn \
     httpx \
     pytest

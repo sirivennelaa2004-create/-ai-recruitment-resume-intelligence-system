@@ -18,8 +18,8 @@ The AI-Powered Recruitment & Resume Intelligence System is a modern full-stack w
             |                              |                   |
             v                              v                   v
 +-----------------------+     +--------------------+   +----------------+
-| PyMuPDF / Text Parser |     | SentenceTransformer|   | PostgreSQL DB  |
-|  (Resume Extraction)  |     |  (all-MiniLM-L6-v2)|   |  (SQLAlchemy)  |
+| PyMuPDF / Text Parser |     | scikit-learn TF-IDF|   | PostgreSQL DB  |
+|  (Resume Extraction)  |     | (Cosine Similarity)|   |  (SQLAlchemy)  |
 +-----------------------+     +--------------------+   +----------------+
 ```
 
@@ -32,7 +32,7 @@ The AI-Powered Recruitment & Resume Intelligence System is a modern full-stack w
 - **JWT Authentication**: Password hashing with `passlib[bcrypt]` and JWT tokens with `python-jose`.
 
 ### 2. AI & NLP Matching Engine
-- **SentenceTransformer (`all-MiniLM-L6-v2`)**: Generates 384-dimensional dense vector embeddings for semantic similarity scoring.
+- **scikit-learn TF-IDF & Cosine Similarity**: Generates lightweight text feature vectors for semantic similarity scoring.
 - **Exact Skill Weighting**: Normalizes skill sets, applies skill importance weights, and computes candidate matched vs missing skills.
 - **Explainable 5-Factor Score**:
   - **Skill Match**: 40%

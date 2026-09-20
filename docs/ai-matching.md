@@ -4,11 +4,11 @@
 The matching engine evaluates candidates against job postings using a hybrid algorithm combining exact normalized skill matching and deep semantic sentence embeddings.
 
 ```
-Resume Text  ───► SentenceTransformer ("all-MiniLM-L6-v2") ───► Embedding Vector (384-d)
-                                                                         │
-                                                                   Cosine Similarity
-                                                                         │
-Job Desc     ───► SentenceTransformer ("all-MiniLM-L6-v2") ───► Embedding Vector (384-d)
+Resume Text  ───► TfidfVectorizer (scikit-learn) ───► TF-IDF Vector
+                                                               │
+                                                         Cosine Similarity
+                                                               │
+Job Desc     ───► TfidfVectorizer (scikit-learn) ───► TF-IDF Vector
 ```
 
 ## 5-Factor Weighted Score Formula
@@ -28,8 +28,8 @@ Where:
 3. Matched skills and missing skills lists are generated explicitly for recruiter and candidate transparency.
 
 ## Semantic Similarity Vector Engine
-- Model: `SentenceTransformer("all-MiniLM-L6-v2")`
-- Generates 384-dimensional dense vector embeddings for resume sections and job descriptions.
+- Engine: `scikit-learn` `TfidfVectorizer` + `cosine_similarity`
+- Generates lightweight TF-IDF feature vectors for resume sections and job descriptions.
 - Cosine similarity is computed using `scikit-learn` pairwise metrics:
 $$\text{Cosine Similarity}(u, v) = \frac{u \cdot v}{\|u\| \|v\|}$$
 - Output is scaled between `0.00%` and `100.00%`.

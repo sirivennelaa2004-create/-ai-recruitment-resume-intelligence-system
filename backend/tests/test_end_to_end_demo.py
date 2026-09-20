@@ -1,4 +1,3 @@
-import os
 import fitz
 import pytest
 from fastapi.testclient import TestClient
@@ -27,16 +26,17 @@ def override_get_db():
         db.close()
 
 
-app.dependency_overrides[get_db] = override_get_db
 client = TestClient(app)
 
 
 @pytest.fixture(autouse=True)
 def setup_db():
+    app.dependency_overrides[get_db] = override_get_db
     Base.metadata.create_all(bind=engine)
     yield
     close_all_sessions()
     Base.metadata.drop_all(bind=engine)
+    app.dependency_overrides.clear()
 
 
 def create_valid_pdf_bytes():
